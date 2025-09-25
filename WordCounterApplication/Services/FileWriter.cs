@@ -9,9 +9,6 @@ namespace WordCounterApplication.Services
         public async Task WriteWordCountsAsync(WordCountResult result, string outputDirectory)
         {
 
-
-            //Directory.CreateDirectory(outputDirectory);
-
             foreach (var letter in Enumerable.Range('A', 26).Select(c => (char)c))
             {
                 var wordsForLetter = result.WordCounts

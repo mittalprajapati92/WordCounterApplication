@@ -1,6 +1,5 @@
 ﻿
 using Microsoft.Extensions.DependencyInjection;
-using WordCounterApplication.Models;
 using WordCounterApplication.Services;
 
 public class Program
@@ -32,7 +31,7 @@ public class Program
         string parentDir = Path.GetDirectoryName(inputDir.TrimEnd(Path.DirectorySeparatorChar))!;
         string outputDir = Path.Combine(parentDir, "OutputFiles");
 
-        // If OutputFiles already exists → delete it (with all contents)
+        // If OutputFiles already exists delete it with all contents
         if (Directory.Exists(outputDir))
         {
             Directory.Delete(outputDir, recursive: true);
