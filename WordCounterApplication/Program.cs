@@ -43,6 +43,13 @@ public class Program
         {
             var lines = await reader.ReadFilesAsync(inputDir);
 
+            // If no lines in input files
+            if (!lines.Any())
+            {
+                Console.WriteLine("No data found in input files. No output files will be created.");
+                return;
+            }
+
             var excludeFilePath = Path.Combine(inputDir, "exclude.txt");
             var excludeWords = await reader.ReadExcludeWordsAsync(excludeFilePath);
 

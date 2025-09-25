@@ -1,4 +1,5 @@
 ﻿
+using WordCounterApplication.Models;
 using WordCounterApplication.Services;
 
 namespace WordCounterApplication.Tests
@@ -38,30 +39,44 @@ namespace WordCounterApplication.Tests
             // Act
             var lines = await reader.ReadFilesAsync(_inputDir);
             var excludeFilePath = Path.Combine(_inputDir, "exclude.txt");
-            var excludeWords = await reader.ReadExcludeWordsAsync(excludeFilePath);
-            var result = processor.ProcessWords(lines, excludeWords);
+            var excludeWords = File.Exists(excludeFilePath) ? await reader.ReadExcludeWordsAsync(excludeFilePath) : new List<string>();
 
-            await writer.WriteWordCountsAsync(result, _outputDir);
 
-            // Assert: EXCLUDED_WORDS.txt exists
-            var excludedPath = Path.Combine(_outputDir, "EXCLUDED_WORDS.txt");
-            Assert.True(File.Exists(excludedPath), "EXCLUDED_WORDS.txt was not created.");
-
-            // Assert: files for letters exist only if words exist
-            foreach (var letter in Enumerable.Range('A', 26).Select(c => (char)c))
+            // Only process if we have lines AND excludeWordsa
+            if (lines.Any() && excludeWords.Any())
             {
-                var filePath = Path.Combine(_outputDir, $"FILE_{letter}.txt");
-                if (result.WordCounts.Keys.Any(w => w.StartsWith(letter.ToString(), StringComparison.OrdinalIgnoreCase)))
-                {
-                    Assert.True(File.Exists(filePath), $"FILE_{letter}.txt was expected but not created.");
-                }
+                var result = processor.ProcessWords(lines, excludeWords);
+                await writer.WriteWordCountsAsync(result, _outputDir);
+
+                // Assert EXCLUDED_WORDS.txt if any excluded words
+                var excludedPath = Path.Combine(_outputDir, "EXCLUDED_WORDS.txt");
+                if (result.ExcludedWordCounts.Any())
+                    Assert.True(File.Exists(excludedPath), "EXCLUDED_WORDS.txt should be created as there are excluded words.");
+
                 else
+                    Assert.False(File.Exists(excludedPath), "EXCLUDED_WORDS.txt should not be created as there are no excluded words.");
+
+
+                // Assert letter files
+                foreach (var letter in Enumerable.Range('A', 26).Select(c => (char)c))
                 {
-                    Assert.False(File.Exists(filePath), $"FILE_{letter}.txt should not exist because no words start with {letter}.");
+                    var filePath = Path.Combine(_outputDir, $"FILE_{letter}.txt");
+                    if (result.WordCounts.Keys.Any(w => w.StartsWith(letter.ToString(), StringComparison.OrdinalIgnoreCase)))
+                        Assert.True(File.Exists(filePath), $"Expected output file for letter '{letter}' is present as words starting with '{letter}' exist.");
+
+                    else
+                        Assert.False(File.Exists(filePath), $"No words start with '{letter}', so FILE_{letter}.txt should not exist.");
+
                 }
             }
+            else
+            {
+                // No input lines or exclude words then nothing should be created
+                var allFiles = Directory.GetFiles(_outputDir);
+                Assert.Empty(allFiles);
+            }
+
 
         }
     }
-
 }

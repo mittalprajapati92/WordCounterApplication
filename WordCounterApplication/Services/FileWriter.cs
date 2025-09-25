@@ -27,11 +27,14 @@ namespace WordCounterApplication.Services
             }
 
 
-            // Write excluded words count
-            var excludedPath = Path.Combine(outputDirectory, "EXCLUDED_WORDS.txt");
-            using var excludedWriter = new StreamWriter(excludedPath);
-            foreach (var kvp in result.ExcludedWordCounts)
-                await excludedWriter.WriteLineAsync($"{kvp.Key} {kvp.Value}");
+            // Write excluded words count only if any exist
+            if (result.ExcludedWordCounts.Any())
+            {
+                var excludedPath = Path.Combine(outputDirectory, "EXCLUDED_WORDS.txt");
+                using var excludedWriter = new StreamWriter(excludedPath);
+                foreach (var kvp in result.ExcludedWordCounts)
+                    await excludedWriter.WriteLineAsync($"{kvp.Key} {kvp.Value}");
+            }
         }
 
     }
