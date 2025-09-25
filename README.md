@@ -17,7 +17,7 @@ Built with **.NET 8.0**, follows **SOLID principles**, and uses **Dependency Inj
 ---
 
 # 🛠️ Project Structure
-
+```
 WordCounterApplication/
 │── Program.cs # Entry point
 │── Models/
@@ -38,7 +38,7 @@ WordCounterApplication.Tests/
 │── FileWriterWordProcessorTest.cs # Tests writer interaction
 │── WordProcessorWithMocksTests.cs # Unit test for processor with mock input
 │── RunFullTest.cs # Unit test for complete processor with real input files from directory path
-
+```
 
 # 🚀 How to Run Projects
 
@@ -59,8 +59,22 @@ WordCounterApplication.Tests/
 **Input Requirements**
   At least one .txt file with text (200+ words recommended you can use https://www.lipsum.com/).
   An exclude.txt file containing 10+ words to be ignored. 
-  
+
+**Exclude.txt file**
+```
+the
+one
+a
+is
+for
+with
+you
+are
+to
+when
+```
 **Output File Generated**
+```
   FILE_L.txt
      LOREM 1
      LIKE 3
@@ -70,8 +84,8 @@ WordCounterApplication.Tests/
 
   EXCLUDED_WORDS.txt
      THE 4
-     AND 1
-  
+     A 1
+  ```
 🧪 **Running Tests**
 
 1. **Navigate to the test project:**
